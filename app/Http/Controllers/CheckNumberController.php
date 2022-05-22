@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-//use http\Client\Request;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -10,6 +9,7 @@ class CheckNumberController extends Controller
 {
     public function check_number(Request $request)
     {
+//        dd($request->all());
         $min = 1;
         $max = 10000000000;
         $isValid = Validator::make($request->all(), [
@@ -38,7 +38,7 @@ class CheckNumberController extends Controller
 
         $aux = $this->process_action($number);
 
-        return $this->execute_loop($aux->i_min, $aux->i_max, $number);
+        return $this->second_check($aux, $number);
 
     }
 
@@ -51,7 +51,7 @@ class CheckNumberController extends Controller
         switch ($number) {
             case $number > 1 && $number <= 1000000000 :
             {
-                $aux->i_min = 2;
+                $aux->i_min = 1;
                 $aux->i_max = 1000000000;
                 return $aux;
             }
@@ -112,36 +112,35 @@ class CheckNumberController extends Controller
         }
     }
 
-    public function execute_loop($min, $max, $number)
+    public function second_check($data, $number)
     {
-        $aux = $max / 2;
+        $range = $data->i_min;
         switch ($number) {
-            case $number >= $aux :
+            case $number >= $data->i_max / 2 :
             {
-                $min = (integer)$aux;
-                for ($i = $min; $i <= $max; $i++) {
-                    if ($i == $number) {
-                        return response([
-                            'message' => 'Success',
-                            'number' => 'The number you entered was "' . $i . '".'
-                        ], 200);
-                    }
-                }
-
+                $range = $range + 500000000;
+                return $this->execute_loop($range, $number);
             }
-            case $number < $aux :
+            case $number < $data->i_max / 2 :
             {
-                $max = (integer)$aux;
-                for ($i = $min; $i <= $max; $i++) {
-                    if ($i == $number) {
-                        return response([
-                            'message' => 'Success',
-                            'number' => 'The number you entered was "' . $i . '".'
-                        ], 200);
-                    }
-                }
-
+                return $this->execute_loop($range, $number);
             }
+        }
+        return 0;
+    }
+
+    public function execute_loop($range, $number)
+    {
+        $min = 1;
+        while ($min <= 500000000) {
+            if ($min + $range == $number) {
+                $value = $min + $range;
+                return response([
+                    'message' => 'Success',
+                    'number' => 'The number you entered was "' . $value . '".'
+                ], 200);
+            }
+            $min++;
         }
     }
 }
