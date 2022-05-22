@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as _,a as o}from"./index.f7000ddd.js";const s={},c={class:"about"},a=o("h1",null,"This is my project.",-1),n=[a];function r(i,d){return t(),_("div",c,n)}var u=e(s,[["render",r]]);export{u as default};
