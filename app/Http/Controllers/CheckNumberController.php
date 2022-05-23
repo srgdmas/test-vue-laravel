@@ -9,7 +9,6 @@ class CheckNumberController extends Controller
 {
     public function check_number(Request $request)
     {
-//        dd($request->all());
         $min = 1;
         $max = 10000000000;
         $isValid = Validator::make($request->all(), [
@@ -36,13 +35,13 @@ class CheckNumberController extends Controller
             ], 200);
         }
 
-        $aux = $this->process_action($number);
+        $aux = $this->first_check($number);
 
         return $this->second_check($aux, $number);
 
     }
 
-    public function process_action($number)
+    public function first_check($number)
     {
         $aux = (object)[
             'i_min' => 1,
